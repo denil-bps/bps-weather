@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPS Weather App - Vidya Niketan Birla Public School</title>
+    <meta name="description" content="Interactive weather prediction platform for Vidya Niketan Birla Public School providing comprehensive meteorological information">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/animations.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <img src="assets/bps-logo.png" alt="BPS Logo" class="loading-logo">
+            <div class="loading-spinner"></div>
+            <p>Loading BPS Weather App...</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-brand">
+                    <img src="assets/bps-logo.png" alt="Birla Public School Pilani" class="logo">
+                    <h1 class="brand-title">BPS Weather App</h1>
+                </div>
+
+                <div class="search-container">
+                    <div class="search-bar">
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            placeholder="Search for a city..." 
+                            class="search-input"
+                        >
+                        <button id="search-btn" class="search-button" type="button">
+                            <i data-lucide="search"></i>
+                        </button>
+                    </div>
+                    <div id="search-suggestions" class="search-suggestions hidden"></div>
+                </div>
+
+                <div class="header-controls">
+                    <div class="temp-toggle">
+                        <span class="temp-label">°C</span>
+                        <label class="switch">
+                            <input type="checkbox" id="temp-unit-toggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="temp-label">°F</span>
+                    </div>
+                    
+                    <div class="auth-section">
+                        <button id="auth-btn" class="auth-button">
+                            <i data-lucide="user"></i>
+                            <span>Sign In</span>
+                        </button>
+                        
+                        <div id="user-menu" class="user-menu hidden">
+                            <button id="user-avatar" class="user-avatar">
+                                <img src="" alt="" class="avatar-img">
+                                <span class="avatar-fallback">U</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <div class="user-info">
+                                    <span class="user-name"></span>
+                                    <span class="user-email"></span>
+                                </div>
+                                <div class="menu-separator"></div>
+                                <a href="#dashboard" class="menu-item">
+                                    <i data-lucide="user"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                                <a href="#favorites" class="menu-item">
+                                    <i data-lucide="heart"></i>
+                                    <span>Favorites</span>
+                                </a>
+                                <a href="#alerts" class="menu-item">
+                                    <i data-lucide="bell"></i>
+                                    <span>Alerts</span>
+                                </a>
+                                <a href="#settings" class="menu-item">
+                                    <i data-lucide="settings"></i>
+                                    <span>Settings</span>
+                                </a>
+                                <div class="menu-separator"></div>
+                                <button id="logout-btn" class="menu-item">
+                                    <i data-lucide="log-out"></i>
+                                    <span>Sign out</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Navigation Tabs -->
+            <nav class="tab-navigation hidden" id="tab-navigation">
+                <button class="tab-btn active" data-tab="home">
+                    <i data-lucide="home"></i>
+                    <span>Weather</span>
+                </button>
+                <button class="tab-btn" data-tab="dashboard">
+                    <i data-lucide="user"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="tab-btn" data-tab="favorites">
+                    <i data-lucide="heart"></i>
+                    <span>Favorites</span>
+                </button>
+                <button class="tab-btn" data-tab="alerts">
+                    <i data-lucide="bell"></i>
+                    <span>Alerts</span>
+                </button>
+                <button class="tab-btn" data-tab="settings">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </button>
+            </nav>
+
+            <!-- Home Tab - Weather Display -->
+            <div id="home-tab" class="tab-content active">
+                <!-- Welcome Screen -->
+                <div id="welcome-screen" class="welcome-screen">
+                    <div class="welcome-content">
+                        <div class="welcome-header">
+                            <i data-lucide="sun" class="welcome-icon"></i>
+                            <h2>Welcome to BPS Weather</h2>
+                            <p>Get accurate weather information for any city around the world</p>
+                        </div>
+                        
+                        <div class="quick-cities">
+                            <h3>Popular Cities</h3>
+                            <div class="city-grid">
+                                <button class="city-card" data-city="Delhi">
+                                    <span class="city-name">Delhi</span>
+                                    <i data-lucide="sun"></i>
+                                </button>
+                                <button class="city-card" data-city="Mumbai">
+                                    <span class="city-name">Mumbai</span>
+                                    <i data-lucide="cloud-rain"></i>
+                                </button>
+                                <button class="city-card" data-city="Bangalore">
+                                    <span class="city-name">Bangalore</span>
+                                    <i data-lucide="cloud"></i>
+                                </button>
+                                <button class="city-card" data-city="Chennai">
+                                    <span class="city-name">Chennai</span>
+                                    <i data-lucide="sun"></i>
+                                </button>
+                                <button class="city-card" data-city="Kolkata">
+                                    <span class="city-name">Kolkata</span>
+                                    <i data-lucide="cloud-drizzle"></i>
+                                </button>
+                                <button class="city-card" data-city="Hyderabad">
+                                    <span class="city-name">Hyderabad</span>
+                                    <i data-lucide="sun"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="feature-highlights">
+                            <div class="feature-card">
+                                <i data-lucide="thermometer"></i>
+                                <h4>Detailed Forecasts</h4>
+                                <p>5-day weather predictions with hourly data</p>
+                            </div>
+                            <div class="feature-card">
+                                <i data-lucide="map"></i>
+                                <h4>Interactive Maps</h4>
+                                <p>Visualize weather patterns with radar</p>
+                            </div>
+                            <div class="feature-card">
+                                <i data-lucide="bell"></i>
+                                <h4>Weather Alerts</h4>
+                                <p>Get notified about severe weather conditions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weather Content -->
+                <div id="weather-content" class="weather-content hidden">
+                    <!-- Current Weather -->
+                    <section id="current-weather" class="current-weather">
+                        <div class="weather-card">
+                            <div class="current-main">
+                                <div class="location-info">
+                                    <h2 id="current-location" class="location-name">--</h2>
+                                    <p id="current-date" class="current-date">--</p>
+                                </div>
+                                
+                                <div class="temperature-display">
+                                    <div class="temp-main">
+                                        <span id="current-temp" class="temperature">--</span>
+                                        <span class="temp-unit">°C</span>
+                                    </div>
+                                    <div id="weather-icon" class="weather-icon">
+                                        <i data-lucide="sun"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="weather-details">
+                                <div class="detail-item">
+                                    <i data-lucide="eye"></i>
+                                    <span class="detail-label">Feels like</span>
+                                    <span id="feels-like" class="detail-value">--°C</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i data-lucide="droplets"></i>
+                                    <span class="detail-label">Humidity</span>
+                                    <span id="humidity" class="detail-value">--%</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i data-lucide="wind"></i>
+                                    <span class="detail-label">Wind</span>
+                                    <span id="wind-speed" class="detail-value">-- km/h</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i data-lucide="gauge"></i>
+                                    <span class="detail-label">Pressure</span>
+                                    <span id="pressure" class="detail-value">-- hPa</span>
+                                </div>
+                            </div>
+
+                            <div class="add-to-favorites">
+                                <button id="add-favorite-btn" class="favorite-btn hidden">
+                                    <i data-lucide="heart"></i>
+                                    <span>Add to Favorites</span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Hourly Forecast -->
+                    <section id="hourly-forecast" class="forecast-section">
+                        <h3 class="section-title">24-Hour Forecast</h3>
+                        <div id="hourly-scroll" class="hourly-container">
+                            <!-- Hourly items will be populated by JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- 5-Day Forecast -->
+                    <section id="daily-forecast" class="forecast-section">
+                        <h3 class="section-title">5-Day Forecast</h3>
+                        <div id="daily-cards" class="daily-container">
+                            <!-- Daily cards will be populated by JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- Sunrise/Sunset -->
+                    <section id="sun-times" class="sun-times-section">
+                        <div class="sun-card">
+                            <div class="sun-item">
+                                <i data-lucide="sunrise"></i>
+                                <div class="sun-info">
+                                    <span class="sun-label">Sunrise</span>
+                                    <span id="sunrise-time" class="sun-time">--:--</span>
+                                </div>
+                            </div>
+                            <div class="sun-item">
+                                <i data-lucide="sunset"></i>
+                                <div class="sun-info">
+                                    <span class="sun-label">Sunset</span>
+                                    <span id="sunset-time" class="sun-time">--:--</span>
+                                </div>
+                            </div>
+                            <div class="sun-item">
+                                <i data-lucide="clock"></i>
+                                <div class="sun-info">
+                                    <span class="sun-label">Day Length</span>
+                                    <span id="day-length" class="sun-time">-- hours</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Weather Map -->
+                    <section id="weather-map-section" class="map-section">
+                        <h3 class="section-title">Weather Map</h3>
+                        <div id="weather-map" class="weather-map">
+                            <div class="map-placeholder">
+                                <i data-lucide="map"></i>
+                                <p>Interactive weather map coming soon</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content">
+                <div class="dashboard-content">
+                    <div class="dashboard-header">
+                        <h2>Weather Dashboard</h2>
+                        <p>Your personalized weather overview</p>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Account Overview</h3>
+                                <i data-lucide="user"></i>
+                            </div>
+                            <div class="user-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Favorite Locations</span>
+                                    <span id="favorite-count" class="stat-value">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Active Alerts</span>
+                                    <span id="alert-count" class="stat-value">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Recent Searches</span>
+                                    <span id="search-count" class="stat-value">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Recent Searches</h3>
+                                <i data-lucide="clock"></i>
+                            </div>
+                            <div id="recent-searches" class="recent-list">
+                                <p class="empty-state">No recent searches</p>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Quick Access</h3>
+                                <i data-lucide="zap"></i>
+                            </div>
+                            <div class="quick-actions">
+                                <button class="action-btn" data-tab="favorites">
+                                    <i data-lucide="heart"></i>
+                                    <span>Manage Favorites</span>
+                                </button>
+                                <button class="action-btn" data-tab="alerts">
+                                    <i data-lucide="bell"></i>
+                                    <span>Weather Alerts</span>
+                                </button>
+                                <button class="action-btn" data-tab="settings">
+                                    <i data-lucide="settings"></i>
+                                    <span>Settings</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Weather Summary</h3>
+                                <i data-lucide="cloud-sun"></i>
+                            </div>
+                            <div id="weather-summary" class="weather-summary">
+                                <p class="empty-state">Search for a location to see weather summary</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Favorites Tab -->
+            <div id="favorites-tab" class="tab-content">
+                <div class="favorites-content">
+                    <div class="section-header">
+                        <h2>Favorite Locations</h2>
+                        <p>Quickly access weather for your saved locations</p>
+                    </div>
+
+                    <div id="favorites-grid" class="favorites-grid">
+                        <div class="empty-favorites">
+                            <i data-lucide="heart"></i>
+                            <h3>No Favorites Yet</h3>
+                            <p>Search for locations and add them to your favorites for quick access</p>
+                            <button class="action-btn" data-tab="home">
+                                <i data-lucide="search"></i>
+                                <span>Search Locations</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Tab -->
+            <div id="alerts-tab" class="tab-content">
+                <div class="alerts-content">
+                    <div class="section-header">
+                        <h2>Weather Alerts</h2>
+                        <p>Set up notifications for weather conditions</p>
+                    </div>
+
+                    <div class="alert-setup-card">
+                        <h3>Create Weather Alert</h3>
+                        <form id="alert-form" class="alert-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="alert-location">Location</label>
+                                    <select id="alert-location" required>
+                                        <option value="">Select a favorite location</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="alert-type">Alert Type</label>
+                                    <select id="alert-type" required>
+                                        <option value="">Select alert type</option>
+                                        <option value="temperature">Temperature</option>
+                                        <option value="rain">Rain</option>
+                                        <option value="wind">Wind Speed</option>
+                                        <option value="humidity">Humidity</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="alert-condition">Condition</label>
+                                    <select id="alert-condition" required>
+                                        <option value="">Select condition</option>
+                                        <option value="above">Above</option>
+                                        <option value="below">Below</option>
+                                        <option value="equals">Equals</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="alert-threshold">Threshold</label>
+                                    <input type="number" id="alert-threshold" step="0.1" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <i data-lucide="plus"></i>
+                                <span>Create Alert</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div id="alerts-list" class="alerts-list">
+                        <div class="empty-alerts">
+                            <i data-lucide="bell"></i>
+                            <h3>No Active Alerts</h3>
+                            <p>Create your first weather alert using the form above</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content">
+                <div class="settings-content">
+                    <div class="section-header">
+                        <h2>Settings</h2>
+                        <p>Customize your weather app experience</p>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>Temperature Unit</h3>
+                            <div class="setting-option">
+                                <label class="setting-label">
+                                    <input type="radio" name="temp-setting" value="celsius" checked>
+                                    <span>Celsius (°C)</span>
+                                </label>
+                                <label class="setting-label">
+                                    <input type="radio" name="temp-setting" value="fahrenheit">
+                                    <span>Fahrenheit (°F)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Theme</h3>
+                            <div class="setting-option">
+                                <label class="setting-label">
+                                    <input type="radio" name="theme-setting" value="light" checked>
+                                    <span>Light</span>
+                                </label>
+                                <label class="setting-label">
+                                    <input type="radio" name="theme-setting" value="dark">
+                                    <span>Dark</span>
+                                </label>
+                                <label class="setting-label">
+                                    <input type="radio" name="theme-setting" value="system">
+                                    <span>System</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Notifications</h3>
+                            <div class="setting-option">
+                                <label class="toggle-setting">
+                                    <span>Enable weather alerts</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="notifications-toggle" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </label>
+                                <label class="toggle-setting">
+                                    <span>Daily weather summary</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="daily-summary-toggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Data & Privacy</h3>
+                            <div class="setting-option">
+                                <button class="action-btn secondary">
+                                    <i data-lucide="download"></i>
+                                    <span>Export Data</span>
+                                </button>
+                                <button class="action-btn secondary">
+                                    <i data-lucide="trash-2"></i>
+                                    <span>Clear Search History</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button id="save-settings" class="submit-btn">
+                            <i data-lucide="save"></i>
+                            <span>Save Settings</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/bps-logo.png" alt="BPS Logo" class="footer-logo">
+                    <div class="brand-info">
+                        <h4>Vidya Niketan Birla Public School</h4>
+                        <p>Pilani, Rajasthan</p>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h5>Weather</h5>
+                        <a href="#home">Current Weather</a>
+                        <a href="#forecast">Forecast</a>
+                        <a href="#map">Weather Map</a>
+                    </div>
+                    <div class="link-group">
+                        <h5>Features</h5>
+                        <a href="#favorites">Favorites</a>
+                        <a href="#alerts">Alerts</a>
+                        <a href="#dashboard">Dashboard</a>
+                    </div>
+                    <div class="link-group">
+                        <h5>Support</h5>
+                        <a href="#help">Help</a>
+                        <a href="#contact">Contact</a>
+                        <a href="#about">About</a>
+                    </div>
+                </div>
+
+                <div class="footer-info">
+                    <p>&copy; 2024 Vidya Niketan Birla Public School</p>
+                    <p>Weather data provided by OpenWeatherMap</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Error Modal -->
+    <div id="error-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Error</h3>
+                <button id="close-error" class="close-btn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="error-message">An error occurred</p>
+            </div>
+            <div class="modal-footer">
+                <button id="error-retry" class="action-btn">
+                    <i data-lucide="refresh-cw"></i>
+                    <span>Retry</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="success-toast" class="toast hidden">
+        <div class="toast-content">
+            <i data-lucide="check-circle"></i>
+            <span id="toast-message">Success</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <script src="scripts/config.js"></script>
+    <script src="scripts/weather-api.js"></script>
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/real-auth.js"></script>
+    <script src="scripts/components.js"></script>
+    <script src="scripts/app.js"></script>
+</body>
+</html>
